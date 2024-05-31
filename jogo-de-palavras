@@ -1,0 +1,83 @@
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        List<string> palavras = new List<string> { "programacao", "jogos", "computador", "csharp" };
+        Random random = new Random();
+        string palavraSecreta = palavras[random.Next(palavras.Count)];
+        HashSet<char> letrasAdivinhadas = new HashSet<char>();
+        HashSet<char> letrasErradas = new HashSet<char>();
+        int tentativasRestantes = 6;
+
+        while (tentativasRestantes > 0)
+        {
+            Console.Clear();
+            ExibirEstadoJogo(palavraSecreta, letrasAdivinhadas, letrasErradas);
+            Console.WriteLine("Digite uma letra: ");
+            char letra = Console.ReadLine().ToLower()[0];
+
+            if (letrasAdivinhadas.Contains(letra) || letrasErradas.Contains(letra))
+            {
+                Console.WriteLine("Você já tentou essa letra. Tente outra.");
+                continue;
+            }
+
+            if (palavraSecreta.Contains(letra))
+            {
+                letrasAdivinhadas.Add(letra);
+            }
+            else
+            {
+                letrasErradas.Add(letra);
+                tentativasRestantes--;
+            }
+
+            if (TodasLetrasAdivinhadas(palavraSecreta, letrasAdivinhadas))
+            {
+                Console.Clear();
+                Console.WriteLine($"Parabéns! Você adivinhou a palavra: {palavraSecreta}");
+                break;
+            }
+        }
+
+        if (tentativasRestantes == 0)
+        {
+            Console.Clear();
+            Console.WriteLine($"Você perdeu! A palavra era: {palavraSecreta}");
+        }
+    }
+
+    static void ExibirEstadoJogo(string palavra, HashSet<char> letrasAdivinhadas, HashSet<char> letrasErradas)
+    {
+        Console.Write("Palavra: ");
+        foreach (char letra in palavra)
+        {
+            if (letrasAdivinhadas.Contains(letra))
+            {
+                Console.Write(letra);
+            }
+            else
+            {
+                Console.Write("_");
+            }
+        }
+        Console.WriteLine();
+        Console.WriteLine($"Letras erradas: {string.Join(", ", letrasErradas)}");
+        Console.WriteLine($"Tentativas restantes: {6 - letrasErradas.Count}");
+    }
+
+    static bool TodasLetrasAdivinhadas(string palavra, HashSet<char> letrasAdivinhadas)
+    {
+        foreach (char letra in palavra)
+        {
+            if (!letrasAdivinhadas.Contains(letra))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+}
